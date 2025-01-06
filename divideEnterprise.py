@@ -10,6 +10,7 @@ import openpyxl
 将1600家企业划分成100家一份的脚本
 """
 
+
 def split_csv_file(input_file, output_dir, chunk_size=100):
     # 检查输出目录是否存在，不存在则创建
     if not os.path.exists(output_dir):
