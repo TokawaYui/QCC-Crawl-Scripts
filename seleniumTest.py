@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import pandas as pd
 import os
+import random
 from htmlHandler import extract_company_info
 
 
@@ -33,7 +34,8 @@ def scrape_company_data(enterprises):
 
     for company_name in enterprises:
         try:
-            time.sleep(10)
+            # driver.get("https://www.qcc.com")
+            time.sleep(random.randint(30, 60))
             # 在搜索框内输入企业名字进行搜索
             search_box = driver.find_element(By.ID, "searchKey")
             search_box.clear()  # 清空搜索框
@@ -42,7 +44,7 @@ def scrape_company_data(enterprises):
             search_button = driver.find_element(By.XPATH, '//button[@type="button" and contains(@class, "btn-primary")]')
             search_button.click()
 
-            time.sleep(10)  # 等待搜索结果加载
+            time.sleep(random.randint(15, 20))  # 等待搜索结果加载
 
             # 进入搜索得到的第一个结果
             WebDriverWait(driver, 10).until(
@@ -64,20 +66,26 @@ def scrape_company_data(enterprises):
             print("目标页面标题:", driver.title)
 
             # 获取页面源代码
-            time.sleep(10)
+            time.sleep(random.randint(10, 15))
             page_source = driver.page_source
-            print(page_source)
+            # print(page_source)
 
             # 提取公司信息
-            # TODO: complete extract_company_info
             company_data = extract_company_info(page_source)
 
             # 添加到公司数据列表中
+            # TODO: 在这里就进入csv的写入
             company_data_list.append(company_data)
 
+        # TODO：记录处理成功的公司和处理失败的公司，方便补充数据
         except Exception as e:
             print(f"处理 {company_name} 时发生错误: {e}")
+            # TODO：错误处理
+            driver.get("https://www.qcc.com")
             continue  # 如果某个公司出错，继续处理下一个
+
+        # 回到首页
+        driver.get("https://www.qcc.com")
 
     driver.quit()  # 退出 WebDriver
 
@@ -85,15 +93,15 @@ def scrape_company_data(enterprises):
     return company_data_list
 
 
-# Test Code
-# 调用函数并传入企业名称数组
-test_enterprises = ['阿里巴巴']
-company_info = scrape_company_data(test_enterprises)
-
-# 打印所有提取到的公司数据
-for data in company_info:
-    for key, value in data.items():
-        print(f"{key}: {value}")
+# # Test Code
+# # 调用函数并传入企业名称数组
+# test_enterprises = ['阿里巴巴']
+# company_info = scrape_company_data(test_enterprises)
+#
+# # 打印所有提取到的公司数据
+# for data in company_info:
+#     for key, value in data.items():
+#         print(f"{key}: {value}")
 
 
 
