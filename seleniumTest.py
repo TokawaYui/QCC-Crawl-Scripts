@@ -10,10 +10,47 @@ import time
 import pandas as pd
 import os
 import random
+import csv
+from datetime import datetime
 from htmlHandler import extract_company_info
 
 
-def scrape_company_data(enterprises):
+def scrape_company_data(enterprises, output_dir, round_num):
+    # 错误日志
+    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    failed_companies_file = f"failed_companies_{round_num}_{timestamp}.log"  # 带时间戳的文件名
+    # 输出csv
+    enterprise_info_csv = os.path.join(output_dir, f'company_info_{round_num}.csv')
+
+    # 设定表头
+    fixed_info = {
+        "企业名称": "",
+        "统一社会信用代码": "",
+        "企业规模": "",
+        "企查分": "",
+        "企业标签": "",
+        "登记状态": "",
+        "成立日期": "",
+        "营业期限": "",
+        "纳税人资质": "",
+        "注册资本": "",
+        "实缴资本": "",
+        "企业类型": "",
+        "人员规模": "",
+        "参保人数": "",
+        "国标行业": "",
+        "经营范围": ""
+    }
+
+    # 检查文件是否存在，如果不存在则创建文件并写入表头
+    file_exists = os.path.exists(enterprise_info_csv)
+    with open(enterprise_info_csv, mode='a', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=fixed_info.keys())
+
+        # 如果文件不存在，则写入表头
+        if not file_exists:
+            writer.writeheader()
+
     # 设置 ChromeDriver 路径
     chrome_driver_path = r'D:\Chrome\chromedriver-win64\chromedriver.exe'  # 替换为你的 Chromedriver 路径
 
@@ -72,15 +109,25 @@ def scrape_company_data(enterprises):
 
             # 提取公司信息
             company_data = extract_company_info(page_source)
+            # 将提取到的公司信息与表头格式化
+            company_data_with_fixed_info = {key: company_data.get(key, "") for key in fixed_info.keys()}
+
+            # TODO: 在这里就尝试csv的写入
+            # 追加公司数据到 CSV 文件
+            with open(enterprise_info_csv, mode='a', newline='', encoding='utf-8') as file:
+                writer = csv.DictWriter(file, fieldnames=fixed_info.keys())
+                writer.writerow(company_data_with_fixed_info)
 
             # 添加到公司数据列表中
-            # TODO: 在这里就进入csv的写入
             company_data_list.append(company_data)
 
-        # TODO：记录处理成功的公司和处理失败的公司，方便补充数据
+        # 记录处理成功的公司和处理失败的公司，方便补充数据
         except Exception as e:
             print(f"处理 {company_name} 时发生错误: {e}")
-            # TODO：错误处理
+            # 错误处理,把出错的公司名字记录到一个log文件内
+            with open(failed_companies_file, "a") as f:
+                f.write(f"{company_name} - {str(e)}\n")
+
             driver.get("https://www.qcc.com")
             continue  # 如果某个公司出错，继续处理下一个
 

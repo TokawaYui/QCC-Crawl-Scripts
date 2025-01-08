@@ -7,11 +7,11 @@ import os
 import openpyxl
 
 """
-将1600家企业划分成100家一份的脚本
+将1600家企业划分成20家一份的脚本
 """
 
 
-def split_csv_file(input_file, output_dir, chunk_size=100):
+def split_csv_file(input_file, output_dir, chunk_size=20):
     # 检查输出目录是否存在，不存在则创建
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -45,5 +45,5 @@ def split_csv_file(input_file, output_dir, chunk_size=100):
 
 # 使用示例
 input_file = "user_list.xlsx"  # 替换为你的输入文件名
-output_dir = "E:\data\企业电力数据\分片企业名单"  # 替换为你的输出目录
-split_csv_file(input_file, output_dir, chunk_size=100)
+output_dir = "E:\data\企业电力数据\分片企业名单_20"  # 替换为你的输出目录
+split_csv_file(input_file, output_dir, chunk_size=20)

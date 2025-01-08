@@ -25,47 +25,49 @@ def extract_company_info(html_text):
     if tag_parts:
         print("锁定tags")
         print(tag_parts[0])
-    # 爬取tag标签的内容
-    # 爬取蓝色标签class为ntag text-primary text-brand-blue
-    blue_tag_elements = tag_parts[0].find_all("span", class_="ntag text-primary text-brand-blue")
-    # print(blue_tag_elements)
-    for tag in blue_tag_elements:
-        company_tags.append(tag.get_text(strip=True))
-        if "事业单位" in tag.get_text(strip=True):
-            # 如果是事业单位
+        # 爬取tag标签的内容
+        # 爬取蓝色标签class为ntag text-primary text-brand-blue
+        blue_tag_elements = tag_parts[0].find_all("span", class_="ntag text-primary text-brand-blue")
+        # print(blue_tag_elements)
+        for tag in blue_tag_elements:
+            company_tags.append(tag.get_text(strip=True))
+            if "事业单位" in tag.get_text(strip=True):
+                # 如果是事业单位
+                print(tag.get_text(strip=True))
+                print("该单位为事业单位，跳过")
+                return False
+            else:
+                print(tag.get_text(strip=True))
+                continue
+
+        # ntag text-primary text-brand-blue click
+        blue_click_tag_elements = tag_parts[0].find_all("span", class_="ntag text-primary text-brand-blue click")
+        # print(blue_click_tag_elements)
+        for tag in blue_click_tag_elements:
+            company_tags.append(tag.get_text(strip=True))
             print(tag.get_text(strip=True))
-            print("该单位为事业单位，跳过")
-            return False
-        else:
+
+        # 爬取红色标签 ntag text-primary text-red click
+        red_tag_elements = tag_parts[0].find_all("span", class_="ntag text-primary text-red click")
+        # print(red_tag_elements)
+        for tag in red_tag_elements:
+            company_tags.append(tag.get_text(strip=True))
             print(tag.get_text(strip=True))
-            continue
+            # TODO：标签单独列出？
+            if "失信被执行人" in tag.get_text(strip=True):
+                company_info["失信被执行人"] = 1
+                print("该单位被列为失信被执行人")
+            elif "限制高消费" in tag.get_text(strip=True):
+                company_info["限制高消费"] = 1
+                print("该单位被限制高消费")
+            elif "被执行人" in tag.get_text(strip=True):
+                company_info["被执行人"] = 1
+                print("该单位被列为被执行人")
 
-    # ntag text-primary text-brand-blue click
-    blue_click_tag_elements = tag_parts[0].find_all("span", class_="ntag text-primary text-brand-blue click")
-    # print(blue_click_tag_elements)
-    for tag in blue_click_tag_elements:
-        company_tags.append(tag.get_text(strip=True))
-        print(tag.get_text(strip=True))
-
-    # 爬取红色标签 ntag text-primary text-red click
-    red_tag_elements = tag_parts[0].find_all("span", class_="ntag text-primary text-red click")
-    # print(red_tag_elements)
-    for tag in red_tag_elements:
-        company_tags.append(tag.get_text(strip=True))
-        print(tag.get_text(strip=True))
-        # TODO：标签单独列出？
-        if "失信被执行人" in tag.get_text(strip=True):
-            company_info["失信被执行人"] = 1
-            print("该单位被列为失信被执行人")
-        elif "限制高消费" in tag.get_text(strip=True):
-            company_info["限制高消费"] = 1
-            print("该单位被限制高消费")
-        elif "被执行人" in tag.get_text(strip=True):
-            company_info["被执行人"] = 1
-            print("该单位被列为被执行人")
-
-    company_info["企业标签"] = company_tags
-    print(company_info["企业标签"])
+        company_info["企业标签"] = company_tags
+        print(company_info["企业标签"])
+    else:
+        print("该公司没有标签")
 
     """
     爬取企业规模
