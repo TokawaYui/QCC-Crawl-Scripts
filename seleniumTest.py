@@ -15,7 +15,7 @@ from datetime import datetime
 from htmlHandler import extract_company_info
 
 
-def scrape_company_data(enterprises_list, output_dir, round_num):
+def scrape_company_data(enterprises_list, output_dir, round_num, ch_dir, data_dir):
     # 错误日志
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     failed_companies_file = os.path.join(output_dir, f"failed_companies_{round_num}_{timestamp}.log")  # 带时间戳的文件名)
@@ -55,12 +55,13 @@ def scrape_company_data(enterprises_list, output_dir, round_num):
 
     # TODO： 设置ChromeDriver路径
     # 设置 ChromeDriver 路径
-    chrome_driver_path = r'D:\Chrome\chromedriver-win64-133\chromedriver-win64\chromedriver.exe'  # 替换为你的 Chromedriver 路径
-
+    # chrome_driver_path = r'D:\Chrome\chromedriver-win64-133\chromedriver-win64\chromedriver.exe'  # 替换为你的 Chromedriver 路径
+    chrome_driver_path = ch_dir
     # 创建 ChromeOptions 对象
     options = Options()
     # TODO： 设置谷歌用户数据路径
-    options.add_argument('--user-data-dir=C:/Users/86183/AppData/Local/Google/Chrome/User Data')  # 替换为你的 Chrome 配置路径
+    # options.add_argument('--user-data-dir=C:/Users/86183/AppData/Local/Google/Chrome/User Data')  # 替换为你的 Chrome 配置路径
+    options.add_argument('--user-data-dir={}'.format(data_dir))  # 你的 Chrome 配置路径
     options.add_argument('--profile-directory=Default')  # 如果你使用默认用户配置
 
     # 初始化 WebDriver
