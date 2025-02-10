@@ -15,10 +15,11 @@ from seleniumTest import scrape_company_data
 print("QCC Scape Crawl Starting......")
 # TO CONFIRM 输入文件路径
 # TO CONFIRM 批次
-round_num = 2
-input_dir = "E:\data\企业电力数据\分片企业名单_20"  # 替换为你的文件路径
+# TODO：设置项
+round_num = 3  # 在这里填入每次要爬取的企业名单编号
+input_dir = "E:\data\企业电力数据\分片企业名单_20_re"  # 替换为你的文件路径
 input_file = os.path.join(input_dir, f"enterprise_{round_num}.csv")
-output_dir = "E:\data\企业电力数据\分片企业名单_20"
+output_dir = "E:\data\企业电力数据\分片企业名单_20_output_re"
 
 
 print(f"Now processing {input_file}")
@@ -31,11 +32,11 @@ enterprises = [item[0] for item in enterprises_list]
 
 # 输出数组
 print("Enterprises: ")
-print(enterprises)
-print(len(enterprises))
+print(enterprises_list)
+print(len(enterprises_list))
 
 print("Start Scraping the data")
-company_data_list = scrape_company_data(enterprises, output_dir, round_num)
+company_data_list = scrape_company_data(enterprises_list, output_dir, round_num)
 
 print(company_data_list)
 # TODO: 写进csv内

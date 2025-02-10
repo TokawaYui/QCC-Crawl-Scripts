@@ -15,15 +15,17 @@ from datetime import datetime
 from htmlHandler import extract_company_info
 
 
-def scrape_company_data(enterprises, output_dir, round_num):
+def scrape_company_data(enterprises_list, output_dir, round_num):
     # 错误日志
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    failed_companies_file = f"failed_companies_{round_num}_{timestamp}.log"  # 带时间戳的文件名
+    failed_companies_file = os.path.join(output_dir, f"failed_companies_{round_num}_{timestamp}.log")  # 带时间戳的文件名)
     # 输出csv
     enterprise_info_csv = os.path.join(output_dir, f'company_info_{round_num}.csv')
 
     # 设定表头
     fixed_info = {
+        "UID": "",
+        "户号": "",
         "企业名称": "",
         "统一社会信用代码": "",
         "企业规模": "",
@@ -51,11 +53,13 @@ def scrape_company_data(enterprises, output_dir, round_num):
         if not file_exists:
             writer.writeheader()
 
+    # TODO： 设置ChromeDriver路径
     # 设置 ChromeDriver 路径
-    chrome_driver_path = r'D:\Chrome\chromedriver-win64\chromedriver.exe'  # 替换为你的 Chromedriver 路径
+    chrome_driver_path = r'D:\Chrome\chromedriver-win64-133\chromedriver-win64\chromedriver.exe'  # 替换为你的 Chromedriver 路径
 
     # 创建 ChromeOptions 对象
     options = Options()
+    # TODO： 设置谷歌用户数据路径
     options.add_argument('--user-data-dir=C:/Users/86183/AppData/Local/Google/Chrome/User Data')  # 替换为你的 Chrome 配置路径
     options.add_argument('--profile-directory=Default')  # 如果你使用默认用户配置
 
@@ -69,7 +73,10 @@ def scrape_company_data(enterprises, output_dir, round_num):
 
     company_data_list = []  # 用于存储所有公司的数据
 
-    for company_name in enterprises:
+    for item in enterprises_list:
+        # company_uid = item[0]
+        company_name = item[1]
+        # company_num = item[2]
         try:
             # driver.get("https://www.qcc.com")
             time.sleep(random.randint(30, 60))
@@ -108,7 +115,7 @@ def scrape_company_data(enterprises, output_dir, round_num):
             # print(page_source)
 
             # 提取公司信息
-            company_data = extract_company_info(page_source)
+            company_data = extract_company_info(item, page_source)
             # 将提取到的公司信息与表头格式化
             company_data_with_fixed_info = {key: company_data.get(key, "") for key in fixed_info.keys()}
 

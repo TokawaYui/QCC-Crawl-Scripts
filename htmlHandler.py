@@ -8,8 +8,14 @@ import lxml
 
 
 # 提取企业信息
-def extract_company_info(html_text):
+def extract_company_info(company_data, html_text):
     # 使用BeautifulSoup解析HTML
+    company_uid = company_data[0]
+    company_name = company_data[1]
+    company_num = company_data[2]
+    print(f"uid : {company_uid}")
+    print(f"company_name : {company_name}")
+    print(f"num : {company_num}")
     soup = BeautifulSoup(html_text, "lxml")
     # TODO: 判断html是否完整
 
@@ -117,7 +123,9 @@ def extract_company_info(html_text):
             code_value = code_elem.find_next("span", class_="copy-value")
             if code_value:
                 print("code_value：找到了企业名称")
-                company_info["企业名称"] = code_value.text.strip()
+                company_info["企业名称"] = company_name
+                company_info["UID"] = company_uid
+                company_info["户号"] = company_num
                 print(company_info["企业名称"])
             continue
         elif "登记状态" in td.get_text(strip=True):
@@ -167,7 +175,6 @@ def extract_company_info(html_text):
             continue
         elif "注册资本" in td.get_text(strip=True):
             # TODO： bugfix
-            print("_________________bug fix_____________________")
             print(td.get_text(strip=True))
             code_elem = td
             print("找到了注册资本")
@@ -243,9 +250,11 @@ def extract_company_info(html_text):
         if legal_person:
             company_info["法定代表人"] = legal_person.text.strip()
 
-
+    # TODO: bugfix bool has no get
     # 返回固定格式的公司信息
     fixed_info = {
+        "UID": company_info.get("UID", ""),
+        "户号": company_info.get("户号", ""),
         "企业名称": company_info.get("企业名称", ""),
         "统一社会信用代码": company_info.get("统一社会信用代码", ""),
         "企业规模": company_info.get("企业规模", ""),

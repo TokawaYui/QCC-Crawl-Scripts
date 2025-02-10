@@ -44,6 +44,6 @@ def split_csv_file(input_file, output_dir, chunk_size=20):
 
 
 # 使用示例
-input_file = "user_list.xlsx"  # 替换为你的输入文件名
-output_dir = "E:\data\企业电力数据\分片企业名单_20"  # 替换为你的输出目录
+input_file = "E:/data/企业电力数据/enterprise_uid_mapping.csv"  # 替换为你的输入文件名
+output_dir = "E:/data/企业电力数据/分片企业名单_20_re"  # 替换为你的输出目录
 split_csv_file(input_file, output_dir, chunk_size=20)
